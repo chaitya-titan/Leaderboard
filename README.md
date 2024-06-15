@@ -56,8 +56,4 @@ Deregister a specific user from the contest
 
 ## Postman Collection
 
-#### A Postman collection for testing the API is available below
-
-```
-https://api.postman.com/collections/20879467-1902a829-ff58-46aa-8482-5f5e95734cc8?access_key=PMAT-01J0EP8Y5JYJTPT0VES3M2CNFN
-```
+#### A Postman collection for testing the API is available below [here](https://api.postman.com/collections/20879467-1902a829-ff58-46aa-8482-5f5e95734cc8?access_key=PMAT-01J0EP8Y5JYJTPT0VES3M2CNFN)
