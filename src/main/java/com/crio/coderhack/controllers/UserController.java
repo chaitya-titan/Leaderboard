@@ -35,21 +35,21 @@ public class UserController {
     }
 
     @PostMapping("")
-    public ResponseEntity<String> registerUser(@RequestBody UserRequestDTO userRequestDTO){
-        User user = userService.registerUser(userRequestDTO);
-        return ResponseEntity.created(URI.create("/users/" + user.getId())).body("Created");
+    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO userRequestDTO){
+        UserResponseDTO userResponseDTO = userService.registerUser(userRequestDTO);
+        return ResponseEntity.created(URI.create("/users/" + userResponseDTO.getId())).body(userResponseDTO);
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<String> registerScore(@PathVariable String userId, @RequestBody ScoreRequestDTO scoreRequestDTO){
-        userService.registerScore(userId, scoreRequestDTO);
-        return ResponseEntity.ok().body("Updated");
+    public ResponseEntity<UserResponseDTO> registerScore(@PathVariable String userId, @RequestBody ScoreRequestDTO scoreRequestDTO){
+        UserResponseDTO updatedUserResponseDTO = userService.registerScore(userId, scoreRequestDTO);
+        return ResponseEntity.ok(updatedUserResponseDTO);
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteUser(@PathVariable String userId){
         userService.deleteUser(userId);
-        return ResponseEntity.ok().body("User Deleted");
+        return ResponseEntity.ok("User Deleted Successfully!");
     }
 
 }

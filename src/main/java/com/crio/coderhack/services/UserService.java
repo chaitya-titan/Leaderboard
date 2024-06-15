@@ -46,20 +46,22 @@ public class UserService {
         return userResponseDTOS;
     }
 
-    public User registerUser(UserRequestDTO userRequestDTO){
+    public UserResponseDTO registerUser(UserRequestDTO userRequestDTO){
         User user = new User(userRequestDTO.getUsername());
         long totalUsers = (long) userRepository.findAll().size();
         user.setId(totalUsers+1);
-        return userRepository.save(user);
+        userRepository.save(user);
+        return modelMapper.map(user, UserResponseDTO.class);
     }
 
-    public void registerScore(String userId, ScoreRequestDTO scoreRequestDTO){
+    public UserResponseDTO registerScore(String userId, ScoreRequestDTO scoreRequestDTO){
         Long id = Long.parseLong(userId);
         Badge badge = getBadge(scoreRequestDTO);
         Optional<User> user = userRepository.findById(id);
         user.get().setScore(scoreRequestDTO.getScore());
         user.get().addBadge(badge);
         userRepository.save(user.get());
+        return modelMapper.map(user, UserResponseDTO.class);
     }
 
     public void deleteUser(String userId){
