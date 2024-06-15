@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -21,10 +22,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,7 +49,7 @@ public class UserServiceTest {
 
     @Test
     void testGetUser() {
-        Long id = 138L;
+        String id = "138";
         User user = new User("username");
         user.setId(id);
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
@@ -69,7 +67,7 @@ public class UserServiceTest {
     @Test
     void testGetUser_UserNotFoundException() {
         // Arrange
-        Long id = 48L;
+        String id = "48";
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act and Assert
@@ -103,18 +101,24 @@ public class UserServiceTest {
         UserRequestDTO userRequestDTO = new UserRequestDTO();
         userRequestDTO.setUsername("username");
         User user = new User("username");
-        user.setId(1L);
+        String userId = "131";
+        user.setId(userId);
         when(userRepository.findByUsername("username")).thenReturn(Optional.empty());
-        when(userRepository.findAll()).thenReturn(Collections.emptyList());
-        when(userRepository.save(user)).thenReturn(user);
+
+        ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+        when(userRepository.save(userCaptor.capture())).thenReturn(user);
+
         UserResponseDTO userResponseDTO = new UserResponseDTO();
-        when(mockModelMapper.map(user, UserResponseDTO.class)).thenReturn(userResponseDTO);
+        when(mockModelMapper.map(any(User.class), eq(UserResponseDTO.class))).thenReturn(userResponseDTO);
 
         // Act
         UserResponseDTO result = userService.registerUser(userRequestDTO);
 
         // Assert
         assertEquals(userResponseDTO, result);
+
+        User capturedUser = userCaptor.getValue();
+        assertEquals("username", capturedUser.getUsername());
     }
 
     @Test
@@ -132,7 +136,7 @@ public class UserServiceTest {
     @Test
     void testRegisterScore() {
         // Arrange
-        Long id = 1L;
+        String id = "1";
         ScoreRequestDTO scoreRequestDTO = new ScoreRequestDTO();
         scoreRequestDTO.setScore(50);
         User user = new User("username");
@@ -159,7 +163,7 @@ public class UserServiceTest {
     @Test
     void testRegisterScore_UserNotFoundException() {
         // Arrange
-        Long id = 1L;
+        String id = "1";
         ScoreRequestDTO scoreRequestDTO = new ScoreRequestDTO();
         scoreRequestDTO.setScore(50);
         when(userRepository.findById(id)).thenReturn(Optional.empty());
@@ -170,7 +174,7 @@ public class UserServiceTest {
 
     @Test
     void testRegisterScore_InvalidScoreException() {
-        Long userId = 1L;
+        String userId = "1";
         ScoreRequestDTO scoreRequestDTO = new ScoreRequestDTO();
         scoreRequestDTO.setScore(-1); // Invalid score
 
@@ -186,7 +190,7 @@ public class UserServiceTest {
 
     @Test
     void testDeleteUser_UserFound() {
-        Long userId = 1L;
+        String userId = "1";
         String userIdString = userId.toString();
         User user = new User("username");
         user.setId(userId);
@@ -201,7 +205,7 @@ public class UserServiceTest {
 
     @Test
     void testDeleteUser_UserNotFound() {
-        Long userId = 1L;
+        String userId = "1";
         String userIdString = userId.toString();
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());

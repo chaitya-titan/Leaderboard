@@ -29,7 +29,7 @@ public class UserRepositoryTest {
     public void testFindByUsername_UserExists() {
         // Given
         User user = new User("john_doe");
-        user.setId(123L);
+        user.setId("123");
         userRepository.save(user);
 
         // When

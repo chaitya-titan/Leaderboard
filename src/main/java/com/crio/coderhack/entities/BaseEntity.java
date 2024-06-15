@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Document
 public abstract class BaseEntity {
     @Id
-    private Long id;
+    private String id;
 
     @CreatedDate
     private LocalDate createdDate;

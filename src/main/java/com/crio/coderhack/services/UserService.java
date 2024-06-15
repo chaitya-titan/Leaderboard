@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -31,9 +32,7 @@ public class UserService {
     }
 
     public UserResponseDTO getUser(String userId){
-        Long id = Long.parseLong(userId);
-        Optional<User> user = userRepository.findById(id);
-        System.out.println("In Service Layer Setup userRepository.findById(138L): " + userRepository.findById(id));
+        Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()){
             throw new UserNotFoundException("User Not Found!");
         }
@@ -57,16 +56,14 @@ public class UserService {
             throw new UserAlreadyExistsException("User Already Exists!");
         }
         User user = new User(userRequestDTO.getUsername());
-        long totalUsers = (long) userRepository.findAll().size();
-        user.setId(totalUsers+1);
+        user.setId(UUID.randomUUID().toString());
         userRepository.save(user);
         return modelMapper.map(user, UserResponseDTO.class);
     }
 
     public UserResponseDTO registerScore(String userId, ScoreRequestDTO scoreRequestDTO){
-        Long id = Long.parseLong(userId);
         Badge badge = getBadge(scoreRequestDTO);
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new UserNotFoundException("User not found");
         }
@@ -82,12 +79,11 @@ public class UserService {
     }
 
     public void deleteUser(String userId){
-        Long id = Long.parseLong(userId);
-        Optional<User> user = userRepository.findById(id);
+        Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new UserNotFoundException("User not found");
         }
-        userRepository.deleteById(id);
+        userRepository.deleteById(userId);
     }
 
     private Badge getBadge(ScoreRequestDTO scoreRequestDTO){
