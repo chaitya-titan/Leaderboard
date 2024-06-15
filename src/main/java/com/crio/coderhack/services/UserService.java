@@ -22,20 +22,22 @@ import java.util.Optional;
 public class UserService {
 
     private final IUserRepository userRepository;
-    @Autowired
-    private ModelMapper modelMapper;
 
-    public UserService(IUserRepository userRepository) {
+    private final ModelMapper modelMapper;
+
+    public UserService(IUserRepository userRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
     public UserResponseDTO getUser(String userId){
         Long id = Long.parseLong(userId);
         Optional<User> user = userRepository.findById(id);
+        System.out.println("In Service Layer Setup userRepository.findById(138L): " + userRepository.findById(id));
         if (user.isEmpty()){
             throw new UserNotFoundException("User Not Found!");
         }
-        return modelMapper.map(user, UserResponseDTO.class);
+        return modelMapper.map(user.get(), UserResponseDTO.class);
     }
 
     public List<UserResponseDTO> getUsers(){
@@ -76,7 +78,7 @@ public class UserService {
         user.get().setScore(scoreRequestDTO.getScore());
         user.get().addBadge(badge);
         userRepository.save(user.get());
-        return modelMapper.map(user, UserResponseDTO.class);
+        return modelMapper.map(user.get(), UserResponseDTO.class);
     }
 
     public void deleteUser(String userId){
@@ -89,7 +91,6 @@ public class UserService {
     }
 
     private Badge getBadge(ScoreRequestDTO scoreRequestDTO){
-        //TODO: Write the exception if the score is negative or non usable
         int score = scoreRequestDTO.getScore();
         if(score > 0 && score<30){
             return Badge.Code_Ninja;
